@@ -1,0 +1,131 @@
+name: App Leal develop
+run-name: ${{ github.actor }} is deploy develop App  🚀
+on:
+  push:
+    branches: [feature/, fix/FIX**,]
+
+jobs:
+  test-app-leal:
+    name: run-test
+    if:  ${{ contains(github.event.head_commit.message, 'deploy-develop') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
+      - name: postgres test
+        uses: ikalnytskyi/action-setup-postgres@v4
+        with:
+          database: leal_campaign_fidelisation_db
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.18.x'
+      - name: Verify dependencies
+        run: go mod verify
+      - name: Install dependencies
+        run: go get .
+      - name: Build
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test
+
+      - name: Check test errors
+        if: ${{ failure() }}
+        env:
+          ERROR_MESSAGE: One or more tests failed
+        run: echo "::set-output name=response::${ERROR_MESSAGE}"
+      - name: Check test without errors
+        if: ${{ success() }}
+        env:
+          SUCCESS_MESSAGE: All tests were successful
+        run: echo "::set-output name=response::${SUCCESS_MESSAGE}"
+
+  ci-app-leal:
+    name: Build image and push to cloud
+    needs: test-app-leal
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v2
+      - name: build and push the docker image
+        env:
+          IMAGE_NAME: app-leal
+        run: |
+          echo build docker image and upload in image register o cloud
+          docker build -t $IMAGE_NAME:latest .
+
+
+
+  cd-app-candidate:
+    name: Deploy image in k8s, ECS or cloud instance
+    needs: [test-app-leal, ci-app-leal]
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: code checkout
+        uses: actions/checkout@v2
+
+      - name: deploy to gke
+        run:
+          echo Deploy app-leal
+
+  merge-branch-develop:
+    name: Merge-dev
+    needs: test-app-leal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Branch name
+        run: |
+          echo running on branch ${GITHUB_REF##*/}
+      - name: Merge ${GITHUB_REF##*/} -> develop
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          target_branch: develop
+          message: Merge ${GITHUB_REF##*/} into develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  codecov:
+    name: upload coverage codecov
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
+      - name: postgres test
+        uses: ikalnytskyi/action-setup-postgres@v4
+        with:
+          database: leal_campaign_fidelisation_db
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.18.x'
+      - name: Verify dependencies
+        run: go mod verify
+      - name: Install dependencies
+        run: go get .
+      - name: Build
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test -race -coverprofile=coverage.out -covermode=atomic
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@<action version> # Ex: v2.1.0, See the latest version at https://github.com/marketplace/actions/sonarcloud-scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
