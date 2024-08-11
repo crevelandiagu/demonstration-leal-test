@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  go_app:
+    container_name: go_app_leal
+    build: .
+    ports:
+      - "5000:5000"
+    restart: on-failure
+    depends_on:
+      go_db:
+        condition: service_healthy
+    networks:
+      - web_global
+
+  go_db:
+    container_name: go_db_leal
+    image: "postgres:11.5-alpine"
+    restart: always
+    environment:
+      POSTGRES_DB: leal_campaign_fidelisation_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - web_global
+
+networks:
+  web_global:
