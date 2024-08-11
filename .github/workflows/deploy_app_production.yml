@@ -2,7 +2,6 @@ name: App Leal production
 run-name: ${{ github.actor }} is deploy production App 🚀
 on:
   push:
-    workflow_dispatch: {}
     branches: [main]
 
 jobs:
