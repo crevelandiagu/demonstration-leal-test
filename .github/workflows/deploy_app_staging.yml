@@ -2,6 +2,7 @@ name: App Leal staging
 run-name: ${{ github.actor }} is deploy staging App 🚀
 on:
   push:
+    workflow_dispatch: {}
     branches: [develop]
 
 jobs:
