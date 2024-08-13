@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine
+FROM golang:1.22-alpine
 
 WORKDIR /app
 
@@ -8,10 +8,10 @@ COPY . .
 RUN go get -d -v ./...
 
 # Build the Go app
-RUN go build -o api .
+RUN go build -o app cmd/main.go
 
 #EXPOSE the port
 EXPOSE 5000
 
 # Run the executable
-CMD ["./api"]
+CMD ["./app"]

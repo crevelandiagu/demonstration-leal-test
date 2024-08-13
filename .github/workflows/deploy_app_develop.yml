@@ -3,6 +3,8 @@ run-name: ${{ github.actor }} is deploy develop App  🚀
 on:
   push:
     branches: [feature/, fix/FIX**,]
+  pull_request:
+    branches: [feature/, fix/FIX**,]
 
 jobs:
   test-app-leal:
@@ -29,7 +31,7 @@ jobs:
       - name: Build
         run: go build -v ./...
       - name: Test with the Go CLI
-        run: go test
+        run: go test -v ./... -race -cover -timeout 30s -count 1
 
       - name: Check test errors
         if: ${{ failure() }}
@@ -52,7 +54,7 @@ jobs:
         uses: actions/checkout@v2
       - name: build and push the docker image
         env:
-          IMAGE_NAME: app-leal
+          IMAGE_NAME: app-postgres
         run: |
           echo build docker image and upload in image register o cloud
           docker build -t $IMAGE_NAME:latest .
@@ -71,7 +73,7 @@ jobs:
 
       - name: deploy to gke
         run:
-          echo Deploy app-leal
+          echo Deploy app-postgres
 
   merge-branch-develop:
     name: Merge-dev
