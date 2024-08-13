@@ -12,6 +12,8 @@ services:
         condition: service_healthy
     networks:
       - web_global
+    env_file:
+      - .env.example
 
   go_db:
     container_name: go_db_leal

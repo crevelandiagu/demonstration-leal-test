@@ -1,0 +1,651 @@
+definitions:
+  domain.Branches:
+    properties:
+      Commerce_branche:
+        $ref: '#/definitions/domain.Commerce'
+      branche_name:
+        type: string
+      id:
+        type: integer
+    required:
+    - Commerce_branche
+    - branche_name
+    type: object
+  domain.Campaign:
+    properties:
+      Campaign_commerce:
+        $ref: '#/definitions/domain.Commerce'
+      campaign_commerce_branche:
+        $ref: '#/definitions/domain.Branches'
+      campaign_equation:
+        type: string
+      campaign_name:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: integer
+      start_date:
+        type: string
+    required:
+    - Campaign_commerce
+    - campaign_commerce_branche
+    - campaign_equation
+    - campaign_name
+    - end_date
+    - start_date
+    type: object
+  domain.Commerce:
+    properties:
+      commerce_name:
+        type: string
+      id:
+        type: integer
+    required:
+    - commerce_name
+    type: object
+  domain.LealPoints:
+    type: object
+  domain.PurchaseTransaction:
+    properties:
+      id:
+        type: integer
+      item_type:
+        type: string
+      purchase_commerce:
+        $ref: '#/definitions/domain.Commerce'
+      purchase_commerce_branche:
+        $ref: '#/definitions/domain.Branches'
+      purchase_value:
+        type: integer
+      transaction_type:
+        type: string
+      user_iD:
+        $ref: '#/definitions/domain.User'
+    required:
+    - item_type
+    - purchase_commerce
+    - purchase_commerce_branche
+    - purchase_value
+    - transaction_type
+    - user_iD
+    type: object
+  domain.User:
+    properties:
+      firstname:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+    required:
+    - firstname
+    - lastname
+    type: object
+info:
+  contact:
+    name: Cristian Velandia
+  title: Leal-test
+  version: 0.1.0
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: ping example
+      tags:
+      - healthcheck
+  /v1/commerce:
+    post:
+      consumes:
+      - application/json
+      description: Save New Commerce
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Commerce'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Commerce'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New Commerce
+      tags:
+      - Commerce
+  /v1/commerce/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Find Commerce
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Commerce'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Find Commerce
+      tags:
+      - Commerce
+  /v1/commerce/{id}/branche:
+    post:
+      consumes:
+      - application/json
+      description: Save New Branche Commerce
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Branches'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Branches'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New Branche Commerce
+      tags:
+      - Commerce
+  /v1/commerce/{id}/branche/{idBranche}/campaign:
+    get:
+      consumes:
+      - application/json
+      description: Find Campaign Branche
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: path
+        name: idBranche
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Campaign'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Find Campaign Branche
+      tags:
+      - Commerce
+    post:
+      consumes:
+      - application/json
+      description: Save Campaign Branche
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: path
+        name: idBranche
+        required: true
+        type: integer
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Campaign'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Campaign'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New Campaign Branche
+      tags:
+      - Commerce
+  /v1/commerce/{id}/campaign:
+    get:
+      consumes:
+      - application/json
+      description: Find Campaign Commerce
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Campaign'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Find Campaign Commerce
+      tags:
+      - Commerce
+    post:
+      consumes:
+      - application/json
+      description: Save Campaign Commerce
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Campaign'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Campaign'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New Campaign Commerce
+      tags:
+      - Commerce
+  /v1/commerce/{id}/purchase-transaction:
+    get:
+      consumes:
+      - application/json
+      description: Find Purchase Transaction
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PurchaseTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Find Purchase Transaction
+      tags:
+      - Commerce
+    post:
+      consumes:
+      - application/json
+      description: Save Purchase Transaction
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.PurchaseTransaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PurchaseTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New Purchase Transaction
+      tags:
+      - Commerce
+  /v1/commerce/{id}/redeem/:
+    get:
+      consumes:
+      - application/json
+      description: Find Redeem
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LealPoints'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Find Redeem
+      tags:
+      - Commerce
+    post:
+      consumes:
+      - application/json
+      description: Save Redeem
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LealPoints'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LealPoints'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New Redeem
+      tags:
+      - Commerce
+  /v1/user:
+    post:
+      consumes:
+      - application/json
+      description: Save New User
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: New User
+      tags:
+      - User
+  /v1/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Find User
+      parameters:
+      - description: User Data
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Find User
+      tags:
+      - User
+swagger: "2.0"
